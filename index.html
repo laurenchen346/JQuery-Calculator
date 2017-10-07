@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="calculatorStyle.css">
+	<link rel="stylesheet" type="text/css" href="bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+	<!-- Optional Bootstrap theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="jquery-3.2.1.min.js"></script>
+	<!--<script type="text/javascript" src="myScript.js"></script>-->
+</head>
+<body>
+	<div class="container">
+		<div class="container" id="title">
+			<h1 class="text-center">Jquery Calculator</h1>
+		</div>
+	</div>
+	<div class="container" id="displayPanel">
+		<div class="row">
+			<input id="display" class="col-xs-12 text-right calcs" type="text" name="input" size="16" />
+		</div>
+	</div>
+	<div class="container" id="button">
+		<div class="row">
+			<button class="btn btn-lg btn-default col-xs-6 memoryRec keys" value="mRec">mRec</button>
+			<button class="btn btn-lg btn-default col-xs-6 memoryClear keys" value="mC">mC</button>
+		</div>
+		<div class="row">
+			<button class="btn btn-lg btn-default col-xs-3 clear keys" value="C">C</button>
+			<button class="btn btn-lg btn-default col-xs-3 clearAll keys" value="CE">CE</button>
+			<button class="btn btn-lg btn-default col-xs-3 memoryAdd keys" value="m+">M+</button>
+			<button class="btn btn-lg btn-default col-xs-3 memoryMinus keys" value="m-">M-</button>
+		</div>
+		<div class="row">
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="7">7</button>
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="8">8</button>
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="9">9</button>
+			<button class="btn btn-lg btn-default col-xs-3 operator keys operand" value="/">/</button>
+		</div>
+		<div class="row">
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="4">4</button>
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="5">5</button>
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="6">6</button>
+			<button class="btn btn-lg btn-default col-xs-3 operator keys operand" value="*">*</button>
+		</div>
+		<div class="row">
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="1">1</button>
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="2">2</button>
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="3">3</button>
+			<button class="btn btn-lg btn-default col-xs-3 operator keys operand" value="-">-</button>
+		</div>
+		<div class="row">
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value=".">.</button>
+			<button class="btn btn-lg btn-default col-xs-3 number keys" value="0">0</button>
+			<button class="btn btn-lg btn-default col-xs-3 equals operand keys" value="=">=</button>
+			<button class="btn btn-lg btn-default col-xs-3 operator keys operand" value="+" id="plus">+</button>
+		</div>
+		<div>
+			<label>Memory Number</label>
+			<input id="memory" class="col-xs-12 text-right calcs" type="text" name="input" size="16" />
+		</div>
+	</div>
+
+</body>
+
+
+</html>
+<script type="text/javascript">
+	$(document).ready(function () {
+		var result = 0;
+		var operation = [];
+		var inputValue = [];
+		var memoryNum = [];
+		var checkInputType = true;
+		var isCalcuteComplete = false;
+		var display = $("#display");
+		var memDisplay = $("#memory");
+
+		function initCal() {
+			
+			checkInputType = true;
+			isCalcuteComplete = false;
+			inputValue = [];
+			operation = [];
+		
+		}
+		function calculate() {
+			var tmpSum = inputValue[0];
+			$(operation).each(function (i, e) {
+				var op = operation[i];
+				var value = inputValue[i + 1];
+				//debugger;
+				switch (op) {
+					case "+":
+						tmpSum = parseFloat(tmpSum) + parseFloat(value);
+						//debugger;
+						break;
+					case "-":
+						tmpSum = parseFloat(tmpSum) - parseFloat(value);
+						break;
+					case "*":
+						tmpSum = parseFloat(tmpSum) * parseFloat(value);
+						break;
+					case "/":
+						tmpSum = parseFloat(tmpSum) / parseFloat(value);
+						break;
+					case "=":
+						result = tmpSum;
+						display.val(result);
+						console.log(result);
+						tmpSum = parseFloat(tmpSum) + parseFloat(value);
+						initCal();
+						break;
+					default:
+						break;
+				}
+
+			});
+			
+		}
+		function setMemoryNum(entry) {
+			memoryNum.push(entry);
+		}
+		function clearMemoryNum() {
+			memoryNum = [];
+		}
+		function setInputValue(entry) {
+			inputValue.push(entry);
+		}
+		function setOperation(operand) {
+			setInputValue(display.val());
+			operation.push(operand);
+			$(operation).each(function (i, e) {
+				console.log("input[" + i + "]: " + inputValue[i] + ", operation[" + i + "]: " + operation[i]);
+			})
+			display.val(0);
+		}
+		function removeInputValue() {
+			inputValue.slice(0, -1);
+		}
+		function removeOperation() {
+			operation.slice(0, -1);
+		}
+
+		$(".keys.operand").click(function (e) {
+			setOperation($(e.target).val());
+		});
+		$(".keys.equals").click(function (e) {
+			calculate();
+		});
+		$(".keys.number").click(function (e) {
+			
+			var input;
+			if ($(e.target).val() == ".") {
+				input = $(e.target).val();
+			}
+			else {
+				input = parseFloat($(e.target).val());
+			}
+			if (display.val() == 0) {
+				display.val(input);
+			}
+			else if (result != 0) {
+				result = 0;
+				initCal();
+				display.val(input);
+			}
+			else {
+				display.val(display.val() + input);
+			}
+		})
+		$(".keys.clear").click(function (e) {
+			removeInputValue();
+			display.val("");
+		});
+		$(".keys.clearAll").click(function (e) {
+			initCal();
+			display.val("");
+			console.log(inputValue);
+		});
+		$(".keys.memoryAdd").click(function (e) {
+			setMemoryNum(result);
+			memDisplay.val(memoryNum);
+		});
+		$(".keys.memoryMinus").click(function (e) {
+			var reverse= result * (-1);
+			setMemoryNum(reverse);
+			memDisplay.val(memoryNum);
+		});
+		$(".keys.memoryRec").click(function (e) {
+			var total = 0;
+			for (var i = 0; i < memoryNum.length; i++) {
+				total += memoryNum[i] << 0;
+			}
+			display.val(total);
+		});
+		$(".keys.memoryClear").click(function (e) {
+			memoryNum = [];
+			memDisplay.val("");
+			display.val("");
+		});
+	});
+
+	
+
+</script>
